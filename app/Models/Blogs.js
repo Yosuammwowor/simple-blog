@@ -16,4 +16,20 @@ async function getUsers() {
   };
 }
 
-export { getUsers };
+async function insertUser(data) {
+  if (!fs.existsSync(filepath)) {
+    return { status: "fail", message: "file didnt exist" };
+  }
+
+  const datas = (await getUsers()).data;
+  datas.push(data);
+
+  await fs.promises.writeFile(filepath, JSON.stringify(datas));
+
+  return {
+    status: "success",
+    message: "data successfully added",
+  };
+}
+
+export { getUsers, insertUser };
