@@ -21,16 +21,66 @@ async function requestHandler(req, res) {
   }
 
   if (req.method === "POST") {
-    res.statusCode = 200;
     let data = [];
+
     req.on("data", (chunk) => {
       data.push(chunk);
     });
 
     req.on("end", async () => {
       data = Buffer.concat(data).toString();
+      data = JSON.parse(data);
+      res.statusCode = 400;
 
-      const blogResponse = await insertUser(JSON.parse(data));
+      if (data === null || typeof data !== "object") {
+        res.statusCode = 400;
+        return res.end(
+          JSON.stringify({
+            status: "fail",
+            message: "Invalid not JSON format",
+          }),
+        );
+      }
+
+      if (Object.keys(data).length === 0) {
+        return res.end(
+          JSON.stringify({
+            status: "fail",
+            message: "Invalid empty body",
+          }),
+        );
+      }
+
+      if (Object.keys(data).length > 3) {
+        res.statusCode = 400;
+        return res.end(
+          JSON.stringify({
+            status: "fail",
+            message: "Invalid too many property",
+          }),
+        );
+      }
+
+      if (
+        data.id === "" ||
+        data.title === "" ||
+        data.description === "" ||
+        !("id" in data) ||
+        !("title" in data) ||
+        !("description" in data)
+      ) {
+        res.statusCode = 400;
+        return res.end(
+          JSON.stringify({
+            status: "fail",
+            message: "Invalid id, title, or description",
+          }),
+        );
+      }
+
+      res.statusCode = 200;
+      const blogResponse = await insertUser(data);
+
       return res.end(JSON.stringify(blogResponse));
     });
   }
