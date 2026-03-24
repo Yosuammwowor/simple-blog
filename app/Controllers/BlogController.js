@@ -1,4 +1,5 @@
 import { getUsers, insertUser } from "../Models/Blogs.js";
+import { nanoid } from "nanoid";
 
 async function requestHandler(req, res) {
   res.setHeader("content-type", "application/json");
@@ -51,7 +52,7 @@ async function requestHandler(req, res) {
         );
       }
 
-      if (Object.keys(data).length > 3) {
+      if (Object.keys(data).length > 2) {
         res.statusCode = 400;
         return res.end(
           JSON.stringify({
@@ -62,10 +63,8 @@ async function requestHandler(req, res) {
       }
 
       if (
-        data.id === "" ||
         data.title === "" ||
         data.description === "" ||
-        !("id" in data) ||
         !("title" in data) ||
         !("description" in data)
       ) {
@@ -73,12 +72,18 @@ async function requestHandler(req, res) {
         return res.end(
           JSON.stringify({
             status: "fail",
-            message: "Invalid id, title, or description",
+            message: "Invalid title or description",
           }),
         );
       }
 
       res.statusCode = 200;
+      data = {
+        id: nanoid(),
+        title: data.title,
+        description: data.description,
+      };
+
       const blogResponse = await insertUser(data);
 
       return res.end(JSON.stringify(blogResponse));

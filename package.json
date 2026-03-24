@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Yosuammwowor/simple-blog/issues"
   },
-  "homepage": "https://github.com/Yosuammwowor/simple-blog#readme"
+  "homepage": "https://github.com/Yosuammwowor/simple-blog#readme",
+  "dependencies": {
+    "nanoid": "^5.1.7"
+  }
 }
